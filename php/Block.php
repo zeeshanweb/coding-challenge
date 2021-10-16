@@ -102,7 +102,7 @@ class Block {
 				$query             = new WP_Query(
 					array(
 						'post_type'      => array( 'post', 'page' ),
-						'posts_per_page' => $posts_per_page,
+						'posts_per_page' => 6,
 						'post_status'    => 'any',
 						'date_query'     => array(
 							array(
@@ -116,7 +116,6 @@ class Block {
 						),
 						'tag'            => $tag_filter,
 						'category_name'  => $cat_filter,
-						'post__not_in'   => array( $post_id ),
 						'meta_value'     => $meta_value_filter,
 					)
 				);
@@ -130,8 +129,13 @@ class Block {
 				</h2>
 				<ul>
 				<?php
-				while ( $query->have_posts() ) :
+				$posts = 0; // count the posts displayed, up to 5.
+				while ( $query->have_posts() && $posts < 5 ) :
 					$query->the_post();
+					if ( get_the_ID() === $post_id ) {
+						continue;
+					}
+					$posts++;
 					?>
 					<li><?php the_title(); ?></li>
 					<?php
